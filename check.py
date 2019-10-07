@@ -12,10 +12,9 @@ def get_meta(browser):
     metas = []
     for meta in browser.find_elements_by_tag_name('meta'):
         s = ''
-        name = str(meta.get_attribute('name'))
-        properties = str(meta.get_attribute('property'))
+        # name = str(meta.get_attribute('name'))
+        # properties = str(meta.get_attribute('property'))
         content = str(meta.get_attribute('content').encode('ascii', 'ignore'))
-        # print name, properties, content
         # if properties != 'None':
         #     s += '{0}: {1}'.format(properties, content)
         # elif name != '':
@@ -34,11 +33,19 @@ def get_strings(browser, folder):
         if getStrings.find(txt) != -1:
             stat = True
 
-    # save strings
-    # f = open(folder + '\\strings.txt', 'w')
-    # f.write(getStrings)
-    # f.close()
-    return stat, getStrings
+    return stat
+
+def webStat(data, web):
+    url = web[1]
+    data[url] = []
+    mts = 'Changed' if web[2] == 'True' else 'Normal' # metaStat
+    sts = 'Illegal' if web[3] == 'True' else 'Normal' # strStat
+    data[url].append({ 
+        'Meta': mts,
+        'Strings': sts 
+    })
+
+    return data
 
 def detect(url):
     options = webdriver.ChromeOptions()
@@ -51,14 +58,13 @@ def detect(url):
     if not os.path.exists(folder):
         os.mkdir(folder)
 
+    data = {}
+    
     conn = sqlite3.connect('deface.db')
     c = conn.cursor()
     c.execute('''INSERT INTO urls (urlName)
                      SELECT "''' + url + '" WHERE NOT EXISTS (SELECT * FROM urls WHERE urlName = "' + url + '")')
 
-    data = {}
-    data[url] = []
-    
     old_metas = c.execute('SELECT meta FROM urls WHERE urlName = "' + url + '";').fetchall()[0][0]
     new_metas = get_meta(browser)
     metaStat = False
@@ -71,26 +77,14 @@ def detect(url):
     c.execute('''UPDATE urls 
                  SET metaStat = "''' + str(metaStat) + '''" 
                  WHERE urlName = "''' + url + '";')
-    mts = ''
-    if metaStat:
-        mts = 'Changed'
-    else:
-        mts = 'Normal'
 
-    strStat, strs = get_strings(browser, folder)
+    strStat = get_strings(browser, folder)
     c.execute('''UPDATE urls 
                  SET strStat = "''' + str(strStat) + '''" 
                  WHERE urlName = "''' + url + '";')
-    sts = ''
-    if strStat:
-        sts = 'Illegal'
-    else:
-        sts = 'Normal.'
 
-    data[url].append({ 
-        'Meta': mts,
-        'Strings': sts 
-    })
+    web = c.execute('SELECT * FROM urls WHERE urlName = "' + url + '";').fetchall()[0]
+    webStat(data, web)
 
     browser.close()
     conn.commit()
@@ -103,19 +97,23 @@ def sched():
     urls = c.execute('SELECT urlName FROM urls').fetchall()
     conn.close()
 
+    data = {}
     for url in urls:
-        check(url[0])
+        data.update(detect(url[0]))
+
+    return data
 
 def main():
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    if len(argv) > 1:
-        url = argv[1]
-    else:
-        url = 'stackoverflow.com'
+    # if len(argv) > 1:
+    #     url = argv[1]
+    # else:
+    #     url = 'stackoverflow.com'
 
     r = open('logs.txt', 'w+')
-    dump(detect(url), r, indent=4, sort_keys=True)
+    # dump(detect(url), r, indent=4, sort_keys=True)
+    sched()
     r.write('\n')
     # p = Pool(processes=3)
     # p.map(check, urls)
