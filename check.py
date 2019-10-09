@@ -2,6 +2,7 @@ import os
 import time
 import schedule
 import sqlite3
+import concurrent.futures
 from sys import argv
 from json import dump
 from selenium import webdriver
@@ -94,14 +95,16 @@ def detect(url):
 def sched():
     conn = sqlite3.connect('deface.db')
     c = conn.cursor()
-    urls = c.execute('SELECT urlName FROM urls').fetchall()
+    urlNames = c.execute('SELECT urlName FROM urls').fetchall()
     conn.close()
+    urls = []
+    for u in urlNames:
+        urls.append(u[0])
 
-    data = {}
-    for url in urls:
-        data.update(detect(url[0]))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        executor.map(detect, urls)
 
-    return data
+    return 200
 
 def main():
     if not os.path.exists('logs'):

@@ -20,7 +20,7 @@ c = conn.cursor()
 # c.executemany('INSERT INTO urls(urlName, metaStat, strStat, meta) VALUES (?,?,?,?)', url_list)
 # for i in range(5, 6):
 #     c.execute("DELETE FROM urls WHERE urlId==" + str(i))
-# c.execute('UPDATE urls SET urlName = "stackoverflow.com" WHERE urlName = "stack.com"')
+c.execute('UPDATE urls SET metaStat = "True" WHERE urlName = "stackoverflow.com"')
 url = 'stackoverflow.com'
 urlId = 9
 urlName = 'stackover.com'

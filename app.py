@@ -1,9 +1,11 @@
 from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
+from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import create_engine
 from json import dumps
 import check
-import schedule
+import time
+import atexit
 
 app = Flask(__name__)
 api = Api(app)
@@ -48,12 +50,12 @@ class checkWeb(Resource):
 
 class checkAll(Resource):
     def get(self):
+        print(url)
         return check.sched()
 
 def webStat(web):
     data = {}
     url = web[1]
-    print (url)
     data[url] = []
     mts = 'Changed' if web[2] == 'True' else 'Normal' # metaStat
     sts = 'Illegal' if web[3] == 'True' else 'Normal' # strStat
@@ -87,11 +89,16 @@ class webInfo(Resource):
         conn.close()
         return data
 
+scheduler = BackgroundScheduler(daemon=True)
+scheduler.add_job(func=check.sched, trigger="interval", minutes=15)
+scheduler.start()
+
+atexit.register(lambda: scheduler.shutdown())
+
 api.add_resource(webList, '/web')
 api.add_resource(webInfo, '/web/<url>')
 api.add_resource(checkAll, '/check')
 api.add_resource(checkWeb, '/check/<url>')
 
 if __name__ == '__main__':
-    # schedule.every(5).minutes.do(check.sched())
     app.run(debug=True)
