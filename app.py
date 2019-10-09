@@ -70,6 +70,8 @@ class webList(Resource):
     def get(self):
         conn = db_connect.connect()
         webs = conn.execute('SELECT * FROM urls').cursor.fetchall()
+        if not webs:
+            return 'Not found in Database'
 
         data = {}
         for web in webs:
@@ -82,6 +84,8 @@ class webInfo(Resource):
     def get(self, url):
         conn = db_connect.connect()
         web = conn.execute('SELECT * FROM urls WHERE urlName = "' + url + '"').cursor.fetchall()
+        if not web:
+            return 'Not found in Database'
 
         data = webStat(web[0])
         data[url][0].update({'Meta Info': web[0][4]})
