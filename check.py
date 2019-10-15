@@ -3,8 +3,8 @@ import time
 import schedule
 import sqlite3
 import concurrent.futures
+import json
 from sys import argv
-from json import dump
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from multiprocessing import Pool
@@ -13,18 +13,24 @@ def get_meta(browser):
     metas = []
     for meta in browser.find_elements_by_tag_name('meta'):
         s = ''
-        # name = str(meta.get_attribute('name'))
-        # properties = str(meta.get_attribute('property'))
-        content = str(meta.get_attribute('content').encode('ascii', 'ignore'))
+        name = str(meta.get_attribute('name'))
+        properties = str(meta.get_attribute('property'))
+        content = str(meta.get_attribute('content'))
+        print(content)
+        content.replace('"', '\'')
         # if properties != 'None':
         #     s += '{0}: {1}'.format(properties, content)
         # elif name != '':
         #     s += '{0:15}: {1}'.format(name, content)
-        s += content
+        if properties != 'None' or name:
+            s += content
         if s != '':
             metas.append(str(s))
 
-    return '|'.join(metas)
+    metas = '|'.join(metas)
+    metas.replace("'|", '|')
+
+    return metas.replace("'", "")
 
 def get_strings(browser, folder):
     preStrings = ['Hacked', 'hacker', 'haxor']
@@ -42,20 +48,22 @@ def webStat(data, web):
     mts = 'Changed' if web[2] == 'True' else 'Normal' # metaStat
     sts = 'Illegal' if web[3] == 'True' else 'Normal' # strStat
     data[url].append({ 
-        'Meta': mts,
-        'Strings': sts 
+        'meta': mts,
+        'strings': sts 
     })
 
     return data
 
 def detect(url):
+    company = url[0]
+    url = str(url[1])
     options = webdriver.ChromeOptions()
     options.headless = True
     browser = webdriver.Chrome(options=options)
     browser.get('https://' + url)
     (browser.page_source).encode('utf-8')
 
-    folder = 'logs\\' + url.split('.')[0].split('/')[0]
+    folder = 'logs\\' + company
     if not os.path.exists(folder):
         os.mkdir(folder)
 
@@ -63,15 +71,18 @@ def detect(url):
     
     conn = sqlite3.connect('deface.db')
     c = conn.cursor()
-    c.execute('''INSERT INTO urls (urlName)
-                     SELECT "''' + url + '" WHERE NOT EXISTS (SELECT * FROM urls WHERE urlName = "' + url + '")')
+    c.execute('''INSERT INTO urls (urlName, company)
+                 SELECT "''' + url + '", "' + company + '''" 
+                 WHERE NOT EXISTS 
+                 (SELECT * FROM urls WHERE urlName = "''' + url + '")')
 
     old_metas = c.execute('SELECT meta FROM urls WHERE urlName = "' + url + '";').fetchall()[0][0]
     new_metas = get_meta(browser)
     metaStat = False
+    # print(new_metas, '\n')
     if not old_metas:
         c.execute('''UPDATE urls 
-                     SET meta = "''' + new_metas + '''" 
+                     SET meta = "''' + str(new_metas) + '''" 
                      WHERE urlName = "''' + url + '";')
     elif old_metas != new_metas:
         metaStat = True
@@ -92,14 +103,20 @@ def detect(url):
     conn.close()
     return data
 
-def sched():
+def sched(company=''):
     conn = sqlite3.connect('deface.db')
     c = conn.cursor()
-    urlNames = c.execute('SELECT urlName FROM urls').fetchall()
+    if not company:
+        urlNames = c.execute('SELECT urlName FROM urls WHERE company = "' + company + '"').fetchall()
+    else:
+        urlNames = c.execute('SELECT urlName FROM urls').fetchall()
     conn.close()
     urls = []
     for u in urlNames:
-        urls.append(u[0])
+        if not company:
+            company = u[0].split('.')[0]
+        url = [company, u[0]]
+        urls.append(url)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         executor.map(detect, urls)
@@ -109,15 +126,12 @@ def sched():
 def main():
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    # if len(argv) > 1:
-    #     url = argv[1]
-    # else:
-    #     url = 'stackoverflow.com'
+    if len(argv) > 1:
+        url = argv[1]
+    else:
+        url = 'stackoverflow.com'
 
-    r = open('logs.txt', 'w+')
-    # dump(detect(url), r, indent=4, sort_keys=True)
-    sched()
-    r.write('\n')
+    json.dumps(detect(url), indent=4, sort_keys=True)
     # p = Pool(processes=3)
     # p.map(check, urls)
     # p.close()
