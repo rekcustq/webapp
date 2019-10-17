@@ -28,12 +28,12 @@ Auto scan every 15 minutes
 ## Example:
 
 ```json
-	"google.com": [				[1]
+	"google.com": [              [1]
         {
-            "Meta": "Normal",   [2]
-            "Strings": "Normal" [3]
+            "Meta": "Normal",    [2]
+            "Strings": "Normal"  [3]
         },
-        "Company: google" 		[4]
+        "Company: google"        [4]
     ]
 
     [1]: Url of website
