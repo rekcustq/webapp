@@ -19,15 +19,15 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) to open se
 Auto scan every 15 minutes
 
 - /: list all websites
-- /\<company name\>: list all websites from <company name>
-- /<company name>/<url>: all info of <url>
+- /\<company name\>: list all websites from \<company name\>
+- /\<company name\>/\<url\>: all info of \<url\>
 - /check: scan all
-- /check/<company name>: scan all websites from <company name>
-- /check/<company name>/<url>: scan <url>
+- /check/\<company name\>: scan all websites from \<company name\>
+- /check/\<company name\>/\<url\>: scan \<url\>
 
 ## Example:
 
-```json
+```python
     "google.com": [              [1]
         {
             "Meta": "Normal",    [2]
