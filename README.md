@@ -12,7 +12,7 @@ pip install apscheduler
 pip install selenium
 ```
 
-[Chrome Driver](https://chromedriver.chromium.org/downloads) to open selenium webdriver
+Download [Chrome Driver](https://chromedriver.chromium.org/downloads) to open selenium webdriver
 
 ## Features
 
