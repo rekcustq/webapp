@@ -6,11 +6,11 @@ Detect defacement of a website(s)
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install requirements
 
-'''bash
+```bash
 pip install flask, flask_restful, sqlalchemy
 pip install apscheduler
 pip install selenium
-'''
+```
 
 [Chrome Driver](https://chromedriver.chromium.org/downloads) to open selenium webdriver
 
@@ -27,7 +27,7 @@ Auto scan every 15 minutes
 
 ## Example:
 
-'''json
+```json
 	"google.com": [				[1]
         {
             "Meta": "Normal",   [2]
@@ -40,4 +40,4 @@ Auto scan every 15 minutes
     [2]: Meta tag info: {Changed, Normal}
     [3]: Check illegal String: {Illegal, Normal}
     [4]: Company name
-'''
+```
