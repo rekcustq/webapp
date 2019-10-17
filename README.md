@@ -19,7 +19,7 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) to open se
 Auto scan every 15 minutes
 
 - /: list all websites
-- /<company name>: list all websites from <company name>
+- /\<company name\>: list all websites from <company name>
 - /<company name>/<url>: all info of <url>
 - /check: scan all
 - /check/<company name>: scan all websites from <company name>
