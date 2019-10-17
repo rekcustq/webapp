@@ -39,6 +39,7 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
     },
     "Company: google"        [4]
 ]
+
 [1]: Url of website
 [2]: Meta tag info: {Changed, Normal}
 [3]: Check illegal String: {Illegal, Normal}
