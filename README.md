@@ -16,7 +16,11 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
 
 ## Features
 
-Auto scan every 15 minutes
+- Scan a url
+- Scan multiple urls
+- Auto scan every 15 minutes
+
+## Usage
 
 - /: list all websites
 - /\<company name\>: list all websites from \<company name\>
