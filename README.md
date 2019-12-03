@@ -31,7 +31,7 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
 
 ## Example:
 
-```python
+```cpp
 "https://google.com": [              [1]
     {
         "Meta": "Normal",    [2]
