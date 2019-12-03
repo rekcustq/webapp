@@ -26,8 +26,6 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
 - /?company=__"company name"__: list all websites from __"company name"__
 - /?company=__"company name"__&url=__"url"__: all info of __"url"__
 - /?scan=__true__: scan all
-- /?scan=__true__&company=__"company name"__: scan all websites from __"company name"__
-- /?scan=__true__&company=__"company name"__&url=__"url"__: scan __"url"__
 
 ## Example:
 
