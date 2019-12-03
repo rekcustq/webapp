@@ -23,16 +23,16 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
 ## Usage
 
 - /: list all websites
-- /\<company name\>: list all websites from \<company name\>
-- /\<company name\>/\<url\>: all info of \<url\>
-- /check: scan all
-- /check/\<company name\>: scan all websites from \<company name\>
-- /check/\<company name\>/\<url\>: scan \<url\>
+- /?company="company name": list all websites from \"company name\"
+- /?company="company name"&url="url": all info of \"url\"
+- /?scan=true: scan all
+- /?scan=true&company="company name": scan all websites from \"company name\"
+- /?scan=true&company="company name"&url="url": scan \"url\"
 
 ## Example:
 
 ```python
-"google.com": [              [1]
+"https://google.com": [              [1]
     {
         "Meta": "Normal",    [2]
         "Strings": "Normal"  [3]
@@ -40,7 +40,7 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
     "Company: google"        [4]
 ]
 
-[1]: Url of website
+[1]: Url and protocol of website
 [2]: Meta tag info: {Changed, Normal}
 [3]: Check illegal String: {Illegal, Normal}
 [4]: Company name
