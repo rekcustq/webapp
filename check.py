@@ -1,6 +1,5 @@
 import os
 import time
-import schedule
 import sqlite3
 import concurrent.futures
 import json
@@ -16,7 +15,7 @@ def get_meta(browser):
         name = str(meta.get_attribute('name'))
         properties = str(meta.get_attribute('property'))
         content = str(meta.get_attribute('content'))
-        print(content)
+        # print(content)
         content.replace('"', '\'')
         # if properties != 'None':
         #     s += '{0}: {1}'.format(properties, content)
@@ -56,11 +55,15 @@ def webStat(data, web):
 
 def detect(url):
     company = url[0]
-    url = str(url[1])
+    https = url[1]
+    url = str(url[2])
     options = webdriver.ChromeOptions()
     options.headless = True
     browser = webdriver.Chrome(options=options)
-    browser.get('https://' + url)
+    if https:
+        browser.get('https://' + url)
+    else:
+        browser.get('http://' + url)
     (browser.page_source).encode('utf-8')
 
     folder = 'logs\\' + company
@@ -68,7 +71,7 @@ def detect(url):
         os.mkdir(folder)
 
     data = {}
-    
+
     conn = sqlite3.connect('deface.db')
     c = conn.cursor()
     c.execute('''INSERT INTO urls (urlName, company)
@@ -107,9 +110,9 @@ def sched(company=''):
     conn = sqlite3.connect('deface.db')
     c = conn.cursor()
     if not company:
-        urlNames = c.execute('SELECT urlName FROM urls WHERE company = "' + company + '"').fetchall()
-    else:
         urlNames = c.execute('SELECT urlName FROM urls').fetchall()
+    else:
+        urlNames = c.execute('SELECT urlName FROM urls WHERE company = "' + str(company) + '"').fetchall()
     conn.close()
     urls = []
     for u in urlNames:
@@ -131,7 +134,7 @@ def main():
     else:
         url = 'stackoverflow.com'
 
-    json.dumps(detect(url), indent=4, sort_keys=True)
+    # json.dumps(detect(url), indent=4, sort_keys=True)
     # p = Pool(processes=3)
     # p.map(check, urls)
     # p.close()
@@ -139,7 +142,7 @@ def main():
     print('Done.')
 
 if __name__ == '__main__':
-    schedule.every(5).minutes.do(main)
+    # schedule.every(5).minutes.do(main)
     main()
 
     # while True:

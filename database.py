@@ -30,6 +30,7 @@ metaStat = True
 strStat = False
 meta = 'asdf'
 company = 'google'
+https = True
 # conn.execute('''UPDATE urls
 #                 SET urlId = "''' + str(urlId) + '''", 
 #                     urlName = "''' + str(urlName) + '''",
