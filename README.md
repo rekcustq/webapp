@@ -23,11 +23,11 @@ Download [Chrome Driver](https://chromedriver.chromium.org/downloads) for seleni
 ## Usage
 
 - /: list all websites
-- /?company="company name": list all websites from \"company name\"
-- /?company="company name"&url="url": all info of \"url\"
-- /?scan=true: scan all
-- /?scan=true&company="company name": scan all websites from \"company name\"
-- /?scan=true&company="company name"&url="url": scan \"url\"
+- /?company=__"company name"__: list all websites from __"company name"__
+- /?company=__"company name"__&url=__"url"__: all info of __"url"__
+- /?scan=__true__: scan all
+- /?scan=__true__&company=__"company name"__: scan all websites from __"company name"__
+- /?scan=__true__&company=__"company name"__&url=__"url"__: scan __"url"__
 
 ## Example:
 
